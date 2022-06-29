@@ -21,7 +21,7 @@ const Login = ({setResetPass,setIsLoggedIn,setAt}) => {
         console.log(options)
         fetch("http://localhost:8000/login/",options)
             .then((res)=>{if(res.status==200){
-                res.json().then((data)=>{console.log(data.access_token);setAt(data.access_token);setIsLoggedIn(1)})
+                res.json().then((data)=>{console.log(data.access_token);setAt(data.access_token);setIsLoggedIn({name:data.name,id:data.id,type:data.user_type,email:data.email_id})})
                 }})
             .catch((e)=>console.log(e))
     }
@@ -47,7 +47,7 @@ const Login = ({setResetPass,setIsLoggedIn,setAt}) => {
                     </div>
                     <div>
                         <div onClick={() => onSubmit()} id="login-button" className="login-button">login</div>
-                        <div onClick={() => setResetPass(1)} id="signup-button" className="login-button" style={{marginBottom:"15px",fontWeight:"500",fontSize:"18px"}}>Reset Password</div>
+                        {/* <div onClick={() => setResetPass(1)} id="signup-button" className="login-button" style={{marginBottom:"15px",fontWeight:"500",fontSize:"18px"}}>Reset Password</div> */}
                     </div>
                 </div>
             </div>

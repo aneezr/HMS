@@ -8,15 +8,16 @@ import BloodtypeIcon from '@mui/icons-material/Bloodtype';
 import VaccinesIcon from '@mui/icons-material/Vaccines';
 
 
-const PatientView = () => {
+const PatientView = ({hid,uid}) => {
 
     const[temp,setTemp] = useState(36);
     const[o,setO] = useState(114);
     const[hr,setHr] = useState(102);
+    const[heartRateList,setHeartRateList] = useState([]);
 
 
     useEffect(()=>{
-        const socket = new WebSocket("ws://localhost:8001/phms/connect/webapp/629596d5763cc7c9f720627a&128")
+        const socket = new WebSocket("ws://localhost:8001/phms/connect/webapp/"+{hid}+"&"+{uid})
         socket.onopen = ()=> {console.log("opened")}
         socket.onclose = ()=>{console.log("closed")}
         socket.onmessage = (e)=> {
@@ -26,6 +27,7 @@ const PatientView = () => {
             setTemp(data.body_temp);
             setO(data.o2_lvl);
             setHr(data.heart_rate);
+            setHeartRateList([...heartRateList,data.heart_rate])
         }
     },[])
 
@@ -87,7 +89,7 @@ const PatientView = () => {
                         </div>
                     </div>
                     <div>
-                        <HeartRate />
+                        <HeartRate heartRateList={heartRateList} />
                     </div>
                 </div>
             </div>

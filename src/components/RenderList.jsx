@@ -2,7 +2,8 @@ import React,{useState,useEffect} from 'react'
 
 import PatientView from "./PatientView"
 
-import img from "C:/Users/HP/OneDrive/Pictures/car.png"
+import dr_img from "../static/doctor.jpg"
+import nurse_img from "../static/nurse.jpg"
 
 const RenderList = ({type,at}) =>{
 
@@ -10,32 +11,39 @@ const RenderList = ({type,at}) =>{
     const[list,setList] = useState([])
 
     useEffect(()=>{
-        const options ={
-            method:"GET",
+        setDetail(0);
+        const options = {
+            method : 'GET',
             headers:{
-                "Authorization": "Bearer "+{at},
-                "accept": "application/json",
-                "Content-Type": "application/json"
+                'accept': 'application/json',
+                'Authorization': 'Bearer ' + at
             }
         }
-        fetch("http://localhost:8000/patientget/user/list/",options)
-            .then((res)=>{console.log(res);res.json()})
-            .then((data)=>console.log(data))
-            .catch((e)=>console.log(e))
-    },[])
+        if(type=="nurses"){
+            fetch("http://localhost:8000/nurse/get/user/list/",options)
+                .then(res => res.json())
+                .then(data => setList(data))
+        }else if(type == "doctors"){
+            fetch("http://localhost:8000/doctorget/user/list/",options)
+                .then(res => res.json())
+                .then(data => setList(data))    
+        }
+
+    },[type])
 
     const Detail = () =>{
         return(
             <div className='detail-con'>
                 <div className='details'>
-                    <div className="home-render-item">Name : Aneez Rahman</div>
-                    <div className="home-render-item">Age : 22</div>
-                    <div className="home-render-item">University : ASIET</div>
-                    <div className="home-render-item">Experience : 20</div>
+                    <div className="home-render-item">Name : {list[detail-1].name}</div>
+                    <div className="home-render-item">Designation : {list[detail-1].designation}</div>
+                    <div className="home-render-item">Phone No : {list[detail-1].phone_no}</div>
+                    <div className="home-render-item">Email ID : {list[detail-1].email_id}</div>
+                    <div className="home-render-item">Department : {list[detail-1].department}</div>
                     <div className="home-render-item" style={{background:"red",color:"white"}} onClick={()=>{setDetail(0)}}>Back</div>
                 </div>
                 <div className='detail-img'>
-                    <img src={img} style={{width:"75%",height:"70%"}} />
+                    <img src={type==="doctors"?dr_img:nurse_img} style={{width:"75%",height:"70%"}} />
                 </div>
             </div>
         )
@@ -43,23 +51,17 @@ const RenderList = ({type,at}) =>{
 
     return(
         <div className="home-dashboard">
-        {detail?type==="patients"?<PatientView />:<Detail />:
+        {detail?<Detail />:
         <div className="render-con">
-            <div onClick={()=>setDetail(1)} className="home-render-item">
-                <div>103</div>
-                <div>Aneez Rahman</div>
-                <div>Active</div>
-            </div>
-            <div className="home-render-item">
-                <div>103</div>
-                <div>Ajmal Ali</div>
-                <div>Active</div>
-            </div>
-            <div className="home-render-item">
-                <div>103</div>
-                <div>KM Ali</div>
-                <div>Active</div>
-            </div>
+            {
+                list.map((item,idx)=>
+                    <div onClick={()=>setDetail(idx+1)} className="home-render-item">
+                        <div>{item.emp_id}</div>
+                        <div>{item.name}</div>
+                        <div>{item.department}</div>
+                    </div>
+                )
+            }
         </div>}  
         </div>
     )
